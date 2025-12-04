@@ -1,6 +1,4 @@
-# Letter Templates - All letters are 6 lines high
-# Copy and paste these to create your frames
-
+# Letter Templates - All letters are 8 lines high
 # ========== UPPERCASE LETTERS ==========
 
 A = r"""
@@ -715,7 +713,7 @@ underscore = r"""
         
         
         
-========
+________
 """
 
 space = r"""
@@ -742,7 +740,7 @@ def combine_letters(text, spacing=1):
     Returns:
         Combined ASCII art string
     """
-    # Map characters to their letter variables
+    # Map characters to variables
     char_map = {
         'A': A, 'B': B, 'C': C, 'D': D, 'E': E, 'F': F, 'G': G, 'H': H,
         'I': I, 'J': J, 'K': K, 'L': L, 'M': M, 'N': N, 'O': O, 'P': P,
@@ -759,35 +757,27 @@ def combine_letters(text, spacing=1):
         '_': underscore, ' ': space
     }
     
-    # Split each letter into lines (preserving all whitespace)
+    # Split each letter into lines (preserving alignment whitespace)
     letter_lines = []
     for char in text:
         if char in char_map:
             letter = char_map[char]
-            # Split into lines - preserve all whitespace
             lines = letter.split('\n')
-            # Remove the last empty line if it exists (from trailing newline in raw string)
             if lines and not lines[-1].strip():
                 lines.pop()
-            # Ensure we have exactly 8 lines (0-7, where 7 is for descenders)
             while len(lines) < 8:
                 lines.append("")
-            # Take only first 8 lines
             lines = lines[:8]
             
-            # Normalize line widths: find the maximum width of lines with actual content
-            # This prevents whitespace-only lines from inflating the letter width
+            # Find max and then normalise line widths
+
             max_content_width = 0
             for line in lines:
-                if line.strip():  # Line has non-whitespace content
+                if line.strip():
                     max_content_width = max(max_content_width, len(line))
-            
-            # If all lines are whitespace, use the max width of any line
             if max_content_width == 0:
                 max_content_width = max(len(line) for line in lines) if lines else 0
             
-            # Normalize all lines: trim whitespace-only lines that exceed content width,
-            # then pad all lines to the same width
             normalized_lines = []
             for line in lines:
                 if not line.strip() and len(line) > max_content_width:
@@ -797,18 +787,19 @@ def combine_letters(text, spacing=1):
             
             letter_lines.append(normalized_lines)
         else:
-            # Unknown character - use space
+            # Unknown character - uses space
             lines = space.split('\n')
             if lines and not lines[-1].strip():
                 lines.pop()
             while len(lines) < 8:
                 lines.append("")
             lines = lines[:8]
-            
-            # Normalize space letter too (same logic as above)
+
+            # Same normalisation as above
+
             max_content_width = 0
             for line in lines:
-                if line.strip():  # Line has non-whitespace content
+                if line.strip():
                     max_content_width = max(max_content_width, len(line))
             
             if max_content_width == 0:
@@ -817,7 +808,6 @@ def combine_letters(text, spacing=1):
             normalized_lines = []
             for line in lines:
                 if not line.strip() and len(line) > max_content_width:
-                    # Trim excessive whitespace from whitespace-only lines
                     line = line[:max_content_width] if max_content_width > 0 else ""
                 normalized_lines.append(line.ljust(max_content_width))
             
@@ -825,8 +815,7 @@ def combine_letters(text, spacing=1):
     
     if not letter_lines:
         return ""
-    
-    # All letters should now be exactly 8 lines (0-7, where 7 is for descenders), each with consistent width
+
     num_lines = 8
     combined_lines = []
     
@@ -835,14 +824,11 @@ def combine_letters(text, spacing=1):
         line_parts = []
         for letter in letter_lines:
             if line_idx < len(letter):
-                # Preserve the line exactly as is (including leading whitespace)
+                # Preserve alignemnt whitespace
                 line_parts.append(letter[line_idx])
             else:
-                # Pad with empty string if letter has fewer lines
                 line_parts.append("")
-        
-        # Join lines with spacing between letters
-        # Each letter keeps its normalized width, spacing is added between them
+                
         combined_line = (' ' * spacing).join(line_parts)
         combined_lines.append(combined_line)
     
