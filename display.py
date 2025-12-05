@@ -166,7 +166,14 @@ def play_animation(frames, audio_file=None, loop=True):
                     time.sleep(frame[1])
                 else:
                     time.sleep(1)
-                
+            if not loop:
+                break
+        if audio_stop_event:
+            audio_stop_event.set()
+        clear()
+        sys.stdout.write(Fore.GREEN + "Bye!" + Style.RESET_ALL + "\n")
+        sys.stdout.write("\033[?25h")
+        sys.stdout.flush()
     except KeyboardInterrupt:
         if audio_stop_event:
             audio_stop_event.set()
@@ -176,4 +183,4 @@ def play_animation(frames, audio_file=None, loop=True):
         sys.stdout.flush()
 
 if __name__ == "__main__":
-    play_animation(test_frames)
+    play_animation(test_frames, loop=False)
