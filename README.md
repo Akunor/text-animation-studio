@@ -8,15 +8,12 @@ A Python toolkit for creating beautiful terminal-based ASCII art animations, per
 - **Easy Animation System**: Simple frame-based animation with customizable timing
 - **Color Support**: Full colorama integration for colorful terminal displays
 - **Smart Letter Combining**: Automatically combines letters with proper alignment and spacing
+- **Audio Support**: Optional audio playback synchronized with animations
 - **Cross-platform**: Works on Windows, macOS, and Linux terminals
 
 ## What It Does
 
-This toolkit allows you to create smooth, professional-looking ASCII art animations in your terminal. Perfect for:
-- Personal intro videos
-- Project demonstrations
-- Creative terminal displays
-- Educational presentations
+This toolkit allows you to create simple, smooth ASCII text animations directly in your terminal.
 
 ## Quick Start
 
@@ -32,6 +29,14 @@ cd animation-intro-video
 ```bash
 pip install colorama
 ```
+
+For audio support:
+- **Windows**: WAV files work automatically using built-in `winsound` (no installation needed!)
+- **MP3 support** (optional, cross-platform): 
+  ```bash
+  pip install pydub
+  ```
+  Note: pydub requires ffmpeg for MP3 support. Install ffmpeg separately.
 
 ### 3. Create Your Animation Script
 
@@ -137,6 +142,55 @@ if __name__ == "__main__":
     play_animation(frames)
 ```
 
+### Adding Audio to Your Animation
+
+You can add background audio to your animation for a more immersive experience:
+
+```python
+from colorama import Fore, Style, init
+from letters import combine_letters
+from display import play_animation
+
+init(autoreset=True)
+
+frames = [
+    ((Fore.CYAN + combine_letters("Hi!", spacing=1)), 2),
+    ((Fore.GREEN + combine_letters("My name is Sam", spacing=1)), 2),
+    ((Fore.YELLOW + combine_letters("Welcome!", spacing=1)), 2),
+]
+
+if __name__ == "__main__":
+    # Add audio file path (supports mp3, wav, ogg)
+    audio_file = "path/to/your/audio.mp3"  # Set to None to disable audio
+    play_animation(frames, audio_file=audio_file, loop=True)
+```
+
+**Audio Features:**
+- **Windows**: Built-in support for WAV files (no installation needed!)
+- **MP3 support**: Install pydub for MP3 playback (requires ffmpeg)
+- Audio loops automatically with the animation (can be disabled)
+- Gracefully handles missing audio files or unsupported formats
+- Audio stops when animation is interrupted (Ctrl+C)
+
+**Note**: On Windows, convert MP3 files to WAV format for easiest setup (no additional packages needed). You can use online converters or tools like Audacity.
+
+**Syncing Frames to Audio:**
+
+To calculate equal frame timings based on audio duration:
+
+```python
+from display import calculate_frame_timings_from_audio
+
+# Calculate duration per frame for equal distribution
+audio_file = "your_audio.mp3"
+num_frames = 5
+frame_duration = calculate_frame_timings_from_audio(audio_file, num_frames)
+
+if frame_duration:
+    print(f"Each frame should be {frame_duration:.2f} seconds")
+    # Use this duration for all frames to sync with audio
+```
+
 ## File Structure
 
 ```
@@ -148,6 +202,7 @@ animation-intro-video/
 
 ## Tips
 
+- **Line Length**: Be aware that if any one frame is too long for your terminal display it will break, so avoid putting long lines on a single frame.
 - **Spacing**: Adjust the `spacing` parameter in `combine_letters()` to control letter spacing (default is 1)
 - **Timing**: Experiment with frame durations to find the right pacing for your animation
 - **Colors**: Mix and match colors for visual appeal
@@ -157,6 +212,8 @@ animation-intro-video/
 
 - Python 3.6+
 - colorama (install with `pip install colorama`)
+- **Audio (Windows)**: Built-in `winsound` supports WAV files - no installation needed!
+- **Audio (MP3 support)**: pydub (optional - install with `pip install pydub`, requires ffmpeg)
 
 ## License
 
